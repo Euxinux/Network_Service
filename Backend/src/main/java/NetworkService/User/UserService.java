@@ -47,7 +47,7 @@ public class UserService {
     @PostMapping("/login")
     public ResponseEntity loginUser(@RequestBody User user) throws JsonProcessingException {
         Optional<User> userFromDB = userRepository.findByUsername(user.getUsername());
-        if (userFromDB.isPresent() && userFromDB.get().getPassword().equals(user.getPassword()))
+        if (userFromDB.isPresent() && correctPassword(userFromDB,user))
             return  ResponseEntity.ok(objectMapper.writeValueAsString(userFromDB));
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -80,6 +80,11 @@ public class UserService {
     }
 
 
+    private boolean correctPassword(Optional<User> userFromDB, User user) {
+        if (user.getPassword().equals(userFromDB.get().getPassword()))
+            return  true;
+        return false;
+    }
 
 
 
